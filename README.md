@@ -80,5 +80,4 @@ This project was developed to practice Flutter, work on state management, and cr
 ---
 
 **Author:** Caio Venancio
-**Technology:** Flutter
-**Status:** MVP 1.0 ✅
+
