@@ -1,0 +1,16 @@
+name: spendwise
+version: 1.0.0+1
+description: A simple personal finance tracking app.
+publish_to: 'none'
+
+environment:
+  sdk: ">=2.17.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  shared_preferences: ^2.0.15
+  cupertino_icons: ^1.0.2
+
+flutter:
+  uses-material-design: true
