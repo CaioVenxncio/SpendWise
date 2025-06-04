@@ -17,7 +17,7 @@ A simple **personal finance tracking** app developed in Flutter. Allows users to
 ## 🛠 Technologies Used
 
 * **Flutter** 3.0+
-* **State Management:** `setState()`
+* **State Management:** `provider`
 * **Local Storage:** `shared_preferences`
 * **Design:** Material Design
 
@@ -71,6 +71,12 @@ flutter pub get
 flutter run
 ```
 
+### 5️⃣ Run tests
+
+```bash
+flutter test
+```
+
 ---
 
 ## 🎯 Project Goal
@@ -80,4 +86,6 @@ This project was developed to practice Flutter, work on state management, and cr
 ---
 
 **Author:** Caio Venancio
+
+This project is licensed under the [MIT License](LICENSE).
 
