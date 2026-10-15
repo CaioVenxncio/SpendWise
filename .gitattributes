@@ -1,0 +1,4 @@
+# Pinned web assets are byte-exact: tool/web_assets.dart checks their
+# SHA-256, so Git must never convert line endings in them.
+web/drift_worker.js -text
+*.wasm binary

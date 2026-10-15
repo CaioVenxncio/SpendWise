@@ -1,0 +1,19 @@
+# HTTP response headers for static hosts that read a `_headers` file
+# (Cloudflare Pages, Netlify). Copied unchanged into build/web.
+# Not deployed anywhere yet. See docs/hosting.md.
+
+/*
+  # Cross-origin isolation: lets Drift use the faster, tab-safe OPFS mode.
+  # Safe only because every resource is self-hosted
+  # (`flutter build web --no-web-resources-cdn`).
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: require-corp
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: no-referrer
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
+  # Flutter's main.dart.js and bootstrap files are not content-hashed:
+  # always revalidate so tabs do not keep running an outdated version.
+  Cache-Control: no-cache
+
+/*.wasm
+  Content-Type: application/wasm

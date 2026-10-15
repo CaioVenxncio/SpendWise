@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Format, analyze, test, build web
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.47.7
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Check generated Drift code is current
+        run: |
+          dart run build_runner build --delete-conflicting-outputs
+          git diff --exit-code -- lib/
+
+      - name: Check committed schema snapshot is current
+        run: |
+          dart run drift_dev schema dump lib/data/drift/database.dart "$RUNNER_TEMP/schema.json"
+          latest=$(ls drift_schemas/drift_schema_v*.json | sort -V | tail -1)
+          cmp "$RUNNER_TEMP/schema.json" "$latest"
+
+      - name: Verify Drift web assets (sqlite3.wasm hash, worker version)
+        run: dart run tool/web_assets.dart verify
+
+      # The committed worker was compiled on Windows; identical output on
+      # Linux is expected from dart2js but has not been observed yet.
+      - name: Check worker build is reproducible
+        run: |
+          dart run tool/web_assets.dart build
+          git diff --exit-code -- web/drift_worker.js web/web_assets.lock.json
+
+      - name: Check formatting
+        run: dart format --output=none --set-exit-if-changed .
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Test
+        run: flutter test
+
+      # Production build: JSON backend, self-hosted CanvasKit and fonts.
+      - name: Build web
+        run: flutter build web --release --no-web-resources-cdn
+
+      - name: Check hosting headers are in the build
+        run: grep -q "Cross-Origin-Embedder-Policy: require-corp" build/web/_headers
+
+      # The SQLite path must keep compiling (test namespace only).
+      - name: Build web (Drift, test namespace)
+        run: >
+          flutter build web --release --no-web-resources-cdn
+          --dart-define=SPENDWISE_BACKEND=drift
+          --dart-define=SPENDWISE_NAMESPACE=ci
+          --output build/web_drift_ci
