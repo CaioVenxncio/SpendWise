@@ -64,7 +64,8 @@ jobs:
         run: flutter build web --release --no-web-resources-cdn
 
       - name: Check hosting headers are in the build
-        run: grep -q "Cross-Origin-Embedder-Policy: require-corp" build/web/_headers
+        run: |
+          grep -q "Cross-Origin-Embedder-Policy: require-corp" build/web/_headers
 
       # The SQLite path must keep compiling (test namespace only).
       - name: Build web (Drift, test namespace)
